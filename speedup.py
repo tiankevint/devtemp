@@ -32,4 +32,5 @@ if __name__ == '__main__':
                 # number of threads = number of cores
                 threads = cores
                 args = get_args(app, cores, threads, i)
-                print(' '.join(args))
+                #print(' '.join(args))
+                subprocess.call(args)
