@@ -27,8 +27,8 @@ def get_args(app, cores, threads, iteration, conf='native'):
 
 if __name__ == '__main__':
     app = 'dedup'
-    cores = 2
-    threads = 2
+    cores = 8
+    threads = 8
     iterations = 1
     args = get_args(app, cores, threads, 0, 'native')
     subprocess.call(args)
