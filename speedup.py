@@ -1,36 +1,61 @@
 import os
 import subprocess
+import glob
+
+from turkey import Task
 
 apps = [
-    'dedup', 'swaptions'
+    'dedup'#, 'swaptions'
 ]
 
 iterations = 1
-core_counts = [8,16,32,64]
+core_counts = [1,2,3]
 #threads = [1, 2, 4, 8, 12, 16, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64]
 
+conf = 'simdev'
+
 def get_output_path(app, cores, threads, iteration):
-    return os.path.join('out/%s_c%d_n%d_i%d' % (app, cores, threads, iteration))
-
-
-def get_args(app, cores, threads, iteration, conf='native'):
-    args = 'taskset -c 0-%(cores)d ./bin/run.py one %(app)s -n %(thread)d -c %(conf)s -o %(outputs)s' % {
-        'app': app,
-        'cores': cores-1,
-        'thread': threads,
-        'outputs': get_output_path(app, cores, threads, iteration),
-        'conf': conf
-    }
-
-    return args.split()
-
+    return os.path.join('out', '%s_c%d_n%d_i%d' % (app, cores, threads, iteration))
 
 if __name__ == '__main__':
+    # data collections
+    results = dict()
+
+    taskcounter = -1
+
     for app in apps:
+        results[app] = dict()
         for cores in core_counts:
+            results[app][cores] = dict()
             for i in xrange(iterations):
+                taskcounter  = taskcounter+1
+                
                 # number of threads = number of cores
                 threads = cores
-                args = get_args(app, cores, threads, i)
-                #print(' '.join(args))
-                subprocess.call(args)
+
+                task_args = {
+                    'app': app,
+                    'conf': conf,
+                    'threads': threads,
+                    'taskset': '0-%d' % (cores-1),
+                    'mode': 'pthread',
+                    'diagnostic': 'perf'
+                }
+
+                outpath = get_output_path(app, cores, threads, 0)
+
+                task = Task(task_args, out_dir = outpath)
+                task.run(wait=True)
+
+                fpath = os.path.join(outpath, '%d' % taskcounter, 'task.out')
+
+                print(fpath)
+
+                f = open(fpath)
+                for l in f:
+                    if l.find('cache-misses') > -1:
+                        print l
+                        results[app][cores]['cache-misses'] = int(l.split()[0])
+                    elif l.find('seconds time elapsed') > -1:
+                        print l
+                        results[app][cores]['time'] = float(l.split()[0])
