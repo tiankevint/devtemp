@@ -106,13 +106,11 @@ class Task:
 
         # Run executable
         if stdout:
-            #subprocess.Popen(args, env=os.environ, shell=True)
-            subprocess.Popen(['sleep', '1'])
+            subprocess.Popen(args, env=os.environ, shell=True)
         else:
             with open(self.files['output'], 'w') as out:
-                subprocess.Popen(['sleep', '1'])
-                #subprocess.Popen(args, stdin=open(
-                #    os.devnull), stdout=out, stderr=out, env=os.environ, shell=True)
+                subprocess.Popen(args, stdin=open(
+                    os.devnull), stdout=out, stderr=out, env=os.environ, shell=True)
 
         if wait:
             os.wait()
