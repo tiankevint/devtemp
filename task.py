@@ -98,19 +98,21 @@ class Task:
         args = ' '.join(args)
         if verbose:
             print('Running task %d with args "%s"' % (self.desc['id'], args))
-        args = 'date "+datetime: %Y-%m-%dT%H:%M:%S" && ' + args
+        actual_args = 'date "+datetime: %Y-%m-%dT%H:%M:%S" && ' + args
 
 
         if wait and count:
             config.num_tasks_in_system.increment()
-            print('Job starting: %d' % config.num_tasks_in_system.value)
+            if verbose:
+                print('Job starting: %d' % config.num_tasks_in_system.value)
 
         # Run executable
         if stdout:
-            subprocess.Popen(args, env=os.environ, shell=True)
+            subprocess.Popen(actual_args, env=os.environ, shell=True)
         else:
             with open(self.files['output'], 'w') as out:
-                subprocess.Popen(args, stdin=open(
+                out.write(args)
+                subprocess.Popen(actual_args, stdin=open(
                     os.devnull), stdout=out, stderr=out, env=os.environ, shell=True)
 
         if wait:

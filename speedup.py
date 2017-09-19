@@ -1,6 +1,8 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import os
 import subprocess
-import glob
 
 from turkey import Task
 
@@ -9,7 +11,7 @@ apps = [
 ]
 
 iterations = 1
-core_counts = [1,2,3]
+core_counts = [8, 16, 32, 64]
 #threads = [1, 2, 4, 8, 12, 16, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64]
 
 conf = 'simdev'
