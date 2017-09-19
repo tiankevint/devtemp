@@ -90,9 +90,7 @@ class Task:
             args = 'time -p'.split() + args
 
         if 'taskset' in self.args:
-            args.insert(0, self.args['taskset'])
-            args.insert(0, '-c')
-            args.insert(0, 'taskset')
+            args = ('taskset -c %s' % self.args['taskset']).split() + args
 
         # TODO: this isn't great, but life is complicated
         args = ' '.join(args)
@@ -111,7 +109,10 @@ class Task:
             subprocess.Popen(actual_args, env=os.environ, shell=True)
         else:
             with open(self.files['output'], 'w') as out:
-                out.write(args)
+                if 'taskset' in self.args:
+                    out.write('app: %s, threads: %d, taskset: %s' % (self.args['app'], self.args['nthreads'], self.args['taskset']))
+                else:
+                    out.write('app: %s, threads: %d' % (self.args['app'], self.args['nthreads']))
                 subprocess.Popen(actual_args, stdin=open(
                     os.devnull), stdout=out, stderr=out, env=os.environ, shell=True)
 
