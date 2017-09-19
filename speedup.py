@@ -52,8 +52,6 @@ if __name__ == '__main__':
 
                 fpath = os.path.join(outpath, '%d' % taskcounter, 'task.out')
 
-                print(fpath)
-
                 f = open(fpath)
                 for l in f:
                     if l.find('cache-misses') > -1:
@@ -61,4 +59,4 @@ if __name__ == '__main__':
                     elif l.find('seconds time elapsed') > -1:
                         output['time'] = l.split()[0]
 
-                print('%s, %d, %d, %s, %s' % (app, cores, i, output['cache-misses'], output['time']))
+                print('%s,\t%d,\t%d,\t%s,\t%s' % (app, cores, i, output['cache-misses'], output['time']))
