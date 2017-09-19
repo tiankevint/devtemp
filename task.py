@@ -69,7 +69,7 @@ class Task:
         if 'start' not in self.args:
             self.args['start'] = 0
 
-    def run(self, args={}, stdout=False, wait=False, count=False):
+    def run(self, args={}, stdout=False, wait=False, count=False, verbose=True):
 
         # Overwrite "compile"-time attributes with "run"-time attributes in
         # addition to adding any new attributes
@@ -96,7 +96,8 @@ class Task:
 
         # TODO: this isn't great, but life is complicated
         args = ' '.join(args)
-        print('Running task %d with args "%s"' % (self.desc['id'], args))
+        if verbose:
+            print('Running task %d with args "%s"' % (self.desc['id'], args))
         args = 'date "+datetime: %Y-%m-%dT%H:%M:%S" && ' + args
 
 
@@ -114,7 +115,8 @@ class Task:
 
         if wait:
             os.wait()
-            os.system('date')
+            if verbose:
+                os.system('date')
 
             if count:
                 config.num_tasks_in_system.decrement()

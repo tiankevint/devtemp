@@ -48,7 +48,7 @@ if __name__ == '__main__':
                 outpath = get_output_path(app, cores, threads, 0)
 
                 task = Task(task_args, out_dir = outpath)
-                task.run(wait=True)
+                task.run(wait=True, verbose=False)
 
                 fpath = os.path.join(outpath, '%d' % taskcounter, 'task.out')
 
