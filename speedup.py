@@ -28,6 +28,9 @@ if __name__ == '__main__':
         for cores in core_counts:
             results[app][cores] = dict()
             for i in xrange(iterations):
+                output = dict()
+                results[app][cores][i] = output
+
                 taskcounter  = taskcounter+1
 
                 # number of threads = number of cores
@@ -54,8 +57,8 @@ if __name__ == '__main__':
                 f = open(fpath)
                 for l in f:
                     if l.find('cache-misses') > -1:
-                        print l
-                        results[app][cores]['cache-misses'] = l.split()[0]
+                        output['cache-misses'] = l.split()[0]
                     elif l.find('seconds time elapsed') > -1:
-                        print l
-                        results[app][cores]['time'] = l.split()[0]
+                        output['time'] = l.split()[0]
+
+                print('%s, %d, %d, %s, %s' % (app, cores, i, output['cache-misses'], output['time']))
