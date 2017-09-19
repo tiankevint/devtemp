@@ -29,7 +29,7 @@ if __name__ == '__main__':
             results[app][cores] = dict()
             for i in xrange(iterations):
                 taskcounter  = taskcounter+1
-                
+
                 # number of threads = number of cores
                 threads = cores
 
@@ -55,7 +55,7 @@ if __name__ == '__main__':
                 for l in f:
                     if l.find('cache-misses') > -1:
                         print l
-                        results[app][cores]['cache-misses'] = int(l.split()[0])
+                        results[app][cores]['cache-misses'] = l.split()[0]
                     elif l.find('seconds time elapsed') > -1:
                         print l
-                        results[app][cores]['time'] = float(l.split()[0])
+                        results[app][cores]['time'] = l.split()[0]
