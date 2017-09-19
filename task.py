@@ -110,9 +110,9 @@ class Task:
         else:
             with open(self.files['output'], 'w') as out:
                 if 'taskset' in self.args:
-                    out.write('app: %s, threads: %d, taskset: %s' % (self.args['app'], self.args['nthreads'], self.args['taskset']))
+                    out.write('app: %s, threads: %s, taskset: %s' % (self.args['app'], self.args['nthreads'], self.args['taskset']))
                 else:
-                    out.write('app: %s, threads: %d' % (self.args['app'], self.args['nthreads']))
+                    out.write('app: %s, threads: %s' % (self.args['app'], self.args['nthreads']))
                 subprocess.Popen(actual_args, stdin=open(
                     os.devnull), stdout=out, stderr=out, env=os.environ, shell=True)
 
