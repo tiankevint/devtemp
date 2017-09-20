@@ -4,10 +4,23 @@
 import os
 import subprocess
 
-from turkey import Task
+import sys
 
-apps = ['dedup']
-app = apps[0]
+from turkey import Task,apps
+
+if len(sys.argv) < 3:
+    print('Usage: %s [app] [threads]' % (sys.argv[0]))
+    exit(-1)
+
+app = sys.argv[1]
+
+if not(app in apps):
+    print('invalid app')
+    exit(-1)
+
+threads = int(sys.argv[2])
+if threads < 0:
+    threads = 1 # probably wrong
 
 instances = 16
 threads = 256
@@ -45,18 +58,19 @@ for (i, code) in errs:
 
 results = dict()
 
-for i in xrange(instances):
-    output = dict()
-    results[i] = output
-    fpath = os.path.join(outpath, '%d' % i, 'task.out')
-    with open(fpath) as f:
-        for l in f:
-            if l.find('cache-misses') > -1:
-                output['cache-misses'] = l.split()[0]
-            if l.find('seconds time elapsed') > -1:
-                output['time'] = l.split()[0]
+with open('out%d' % threads, 'w') as out:
+    for i in xrange(instances):
+        output = dict()
+        results[i] = output
+        fpath = os.path.join(outpath, '%d' % i, 'task.out')
+        with open(fpath) as f:
+            for l in f:
+                if l.find('cache-misses') > -1:
+                    output['cache-misses'] = l.split()[0]
+                if l.find('seconds time elapsed') > -1:
+                    output['time'] = l.split()[0]
 
-    if not('cache-misses' in output) or not('time' in output):
-        print('Job %d missing results' % i)
-    else:
-        print('%s,\t%s,\t%s' % (i, output['cache-misses'], output['time']))
+        if not('cache-misses' in output) or not('time' in output):
+            out.write('Job %d missing results\n' % i)
+        else:
+            out.write('%s,\t%s,\t%s\n' % (i, output['cache-misses'], output['time']))
