@@ -104,16 +104,18 @@ class Task:
             if verbose:
                 print('Job starting: %d' % config.num_tasks_in_system.value)
 
+        proc = None
+
         # Run executable
         if stdout:
-            subprocess.Popen(actual_args, env=os.environ, shell=True)
+            proc = subprocess.Popen(actual_args, env=os.environ, shell=True)
         else:
             with open(self.files['output'], 'w') as out:
                 if 'taskset' in self.args:
                     out.write('app: %s, threads: %s, taskset: %s\n' % (self.args['app'], self.args['nthreads'], self.args['taskset']))
                 else:
                     out.write('app: %s, threads: %s\n' % (self.args['app'], self.args['nthreads']))
-                subprocess.Popen(actual_args, stdin=open(
+                proc = subprocess.Popen(actual_args, stdin=open(
                     os.devnull), stdout=out, stderr=out, env=os.environ, shell=True)
 
         if wait:
@@ -125,6 +127,8 @@ class Task:
                 config.num_tasks_in_system.decrement()
                 config.num_tasks_remaining.decrement()
                 print('Job finished: %d' % config.num_tasks_in_system.value)
+
+        return proc
 
 
     def delay(self):
