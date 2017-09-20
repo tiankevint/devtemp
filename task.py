@@ -84,7 +84,7 @@ class Task:
         args = (self.conf['args'] % self.args).split()
         args.insert(0, self.files['exec'])
 
-        if diagnostic in self.desc and self.desc['diagnostic'] == 'perf':
+        if 'diagnostic' in self.desc and self.desc['diagnostic'] == 'perf':
             args = 'perf stat -e cache-misses'.split() + args
         else:
             args = 'time -p'.split() + args
