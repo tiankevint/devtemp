@@ -23,7 +23,6 @@ if threads < 0:
     threads = 1 # probably wrong
 
 instances = 16
-threads = 256
 
 conf = 'native'
 
@@ -36,6 +35,8 @@ task_args = {
     'mode': 'pthread',
     'diagnostic': 'perf'
 }
+
+print('Running with %s' % task_args)
 
 print('Preparing tasks')
 
