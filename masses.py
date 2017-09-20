@@ -3,8 +3,8 @@
 
 import os
 import subprocess
-
 import sys
+import time
 
 from turkey import Task,apps
 
@@ -44,11 +44,16 @@ tasks = [Task(task_args, out_dir = outpath) for i in xrange(instances)]
 
 print('Starting instances (%d)' % instances)
 
+startTime = time.time()
+
 processes = [task.run(wait=False, verbose=False) for task in tasks]
 
 print('All instances started')
 
 exitcodes = [p.wait() for p in processes]
+
+endTime = time.time()
+elapsedTime = endTime - startTime
 
 print('All instances completed')
 
@@ -60,6 +65,7 @@ for (i, code) in errs:
 results = dict()
 
 with open('out%d' % threads, 'w') as out:
+    out.write('total elapsed time: %f\n' % elapsedTime)
     for i in xrange(instances):
         output = dict()
         results[i] = output
