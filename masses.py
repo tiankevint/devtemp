@@ -24,20 +24,24 @@ task_args = {
     'diagnostic': 'perf'
 }
 
-processes = [None] * instances
+print('Preparing tasks')
 
-print('Starting instances... (%d)' % instances)
+tasks = [Task(task_args, out_dir = outpath) for i in xrange(instances)]
 
-# Let them go
-for i in xrange(instances):
-    task = Task(task_args, out_dir = outpath)
-    print('\tstarting process %d of %d' % (i, instances))
-    processes[i] = task.run(wait=False, verbose=False)
+print('Starting instances (%d)' % instances)
+
+processes = [task.run(wait=False, verbose=False) for task in tasks]
+
+print('All instances started')
 
 exitcodes = [p.wait() for p in processes]
 
-print('Instances completed')
-print(exitcodes)
+print('All instances completed')
+
+errs = [(i,exitcodes[i]) for i in xrange(instances) if exitcodes[i] != 0]
+
+for (i, code) in errs:
+    print('Job %d exited with return code %d' % (i, code))
 
 results = dict()
 
@@ -53,6 +57,6 @@ for i in xrange(instances):
                 output['time'] = l.split()[0]
 
     if not('cache-misses' in output) or not('time' in output):
-        print('%d missing results' % i)
+        print('Job %d missing results' % i)
     else:
         print('%s,\t%s,\t%s' % (i, output['cache-misses'], output['time']))
